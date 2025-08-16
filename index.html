@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyHealth360</title>
+    <!-- Link to the external stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons for a clean interface -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font-Awesome for some icons like doctors -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <!-- Google Font - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center">
+
+    <div id="app" class="container bg-white shadow-lg rounded-2xl overflow-hidden md:my-8 relative">
+
+        <!-- Login/Signup Page -->
+        <div id="login-page" class="p-8 flex-1 flex flex-col justify-center transition-opacity duration-300">
+            <h1 class="text-4xl font-bold text-center text-secondary-color mb-8">MyHealth360</h1>
+            <div id="auth-forms">
+                <form id="signin-form" class="space-y-4">
+                    <input type="email" id="signin-email" placeholder="Email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-color" required>
+                    <input type="password" id="signin-password" placeholder="Password" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-color" required>
+                    <button type="submit" class="w-full py-3 bg-primary-color text-white font-semibold rounded-lg hover:bg-teal-700 transition duration-200">Sign In</button>
+                </form>
+                <div class="my-4 text-center text-gray-500">
+                    <button id="toggle-signup" class="text-primary-color hover:underline">Don't have an account? Sign Up</button>
+                </div>
+                <div class="relative flex items-center justify-center my-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <span class="w-full border-t border-gray-300"></span>
+                    </div>
+                    <div class="relative bg-white px-4 text-sm text-gray-500">Or sign in with</div>
+                </div>
+                <button id="google-signin" class="w-full py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition duration-200 flex items-center justify-center gap-2">
+                    <i class="fab fa-google"></i> Sign In with Google
+                </button>
+            </div>
+            
+            <div id="signup-forms" class="space-y-4 hidden">
+                <form id="signup-form" class="space-y-4">
+                    <input type="text" id="signup-name" placeholder="Full Name" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-color" required>
+                    <input type="number" id="signup-age" placeholder="Age" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-color" required>
+                    <select id="signup-gender" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-color" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="email" id="signup-email" placeholder="Email" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-color" required>
+                    <input type="password" id="signup-password" placeholder="Password (min 6 characters)" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-color" required>
+                    <button type="submit" class="w-full py-3 bg-primary-color text-white font-semibold rounded-lg hover:bg-teal-700 transition duration-200">Sign Up</button>
+                </form>
+                <div class="my-4 text-center text-gray-500">
+                    <button id="toggle-signin" class="text-primary-color hover:underline">Already have an account? Sign In</button>
+                </div>
+            </div>
+
+            <!-- Loading Spinner & Error Message -->
+            <div id="auth-status" class="mt-4 text-center">
+                <div id="loading" class="hidden">
+                    <i class="fas fa-spinner fa-spin text-primary-color text-xl"></i>
+                    <p class="text-sm text-gray-600 mt-2">Loading...</p>
+                </div>
+                <div id="error-message" class="text-sm text-red-500 mt-2"></div>
+            </div>
+        </div>
+
+        <!-- Main App Content (hidden by default) -->
+        <div id="main-content" class="p-4 flex-1 flex flex-col hidden">
+            
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page space-y-6 overflow-y-auto">
+                <div class="p-6 bg-secondary-color text-white rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-1">Hi, <span id="user-name"></span></h2>
+                    <p class="text-sm opacity-80">Welcome to your health dashboard.</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Steps Widget -->
+                    <div class="enhanced-card p-5 rounded-xl border-t-4 border-primary-color">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xl font-semibold">Steps</span>
+                            <span class="text-gray-400" id="steps-icon"><i data-lucide="footprints"></i></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="steps-input" class="w-24 px-2 py-1 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-color" placeholder="0">
+                            <button id="steps-update" class="px-4 py-1 text-sm bg-primary-color text-white rounded-lg hover:bg-teal-700 transition duration-200">Update</button>
+                        </div>
+                        <p id="steps-value" class="text-sm mt-2 text-gray-500">Current: 0</p>
+                    </div>
+
+                    <!-- Sleep Widget -->
+                    <div class="enhanced-card p-5 rounded-xl border-t-4 border-primary-color">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xl font-semibold">Sleep</span>
+                            <span class="text-gray-400" id="sleep-icon"><i data-lucide="moon"></i></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="sleep-input" class="w-24 px-2 py-1 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-color" placeholder="0">
+                            <button id="sleep-update" class="px-4 py-1 text-sm bg-primary-color text-white rounded-lg hover:bg-teal-700 transition duration-200">Update</button>
+                        </div>
+                        <p id="sleep-value" class="text-sm mt-2 text-gray-500">Current: 0 hours</p>
+                    </div>
+
+                    <!-- Water Widget -->
+                    <div class="enhanced-card p-5 rounded-xl border-t-4 border-primary-color">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xl font-semibold">Water</span>
+                            <span class="text-gray-400" id="water-icon"><i data-lucide="droplet"></i></span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="water-input" class="w-24 px-2 py-1 text-lg rounded-lg border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-color" placeholder="0">
+                            <button id="water-update" class="px-4 py-1 text-sm bg-primary-color text-white rounded-lg hover:bg-teal-700 transition duration-200">Update</button>
+                        </div>
+                        <p id="water-value" class="text-sm mt-2 text-gray-500">Current: 0 glasses</p>
+                    </div>
+
+                    <!-- Reminders Widget -->
+                    <div class="enhanced-card p-5 rounded-xl border-t-4 border-primary-color">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xl font-semibold">Reminders</span>
+                            <span class="text-gray-400" id="reminders-icon"><i data-lucide="bell"></i></span>
+                        </div>
+                        <ul id="dashboard-reminders-list" class="space-y-2">
+                            <!-- Reminders will be dynamically loaded here -->
+                        </ul>
+                        <div class="mt-4">
+                            <a href="#" class="text-primary-color hover:underline text-sm" onclick="showPage('reminders-page')">Manage Reminders</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Assistant & Doctor Section -->
+                <div class="enhanced-card p-6 rounded-xl flex justify-between items-center bg-secondary-color text-white">
+                    <div>
+                        <h3 class="text-xl font-semibold">AI Health Assistant</h3>
+                        <p class="text-sm opacity-80">Get lifestyle and wellness advice.</p>
+                    </div>
+                    <button class="bg-white text-secondary-color font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-200" onclick="showPage('chat-page')">
+                        Chat Now
+                    </button>
+                </div>
+                
+                <div class="enhanced-card p-6 rounded-xl flex justify-between items-center bg-primary-color text-white">
+                    <div>
+                        <h3 class="text-xl font-semibold">Consult a Doctor</h3>
+                        <p class="text-sm opacity-80">Find and book appointments.</p>
+                    </div>
+                    <button class="bg-white text-primary-color font-semibold py-2 px-4 rounded-full hover:bg-gray-200 transition duration-200" onclick="showPage('doctors-page')">
+                        Book Now
+                    </button>
+                </div>
+            </div>
+            
+            <!-- AI Health Assistant Page -->
+            <div id="chat-page" class="page hidden flex-1 flex flex-col bg-gray-50 transition-opacity duration-300">
+                <div class="p-4 bg-primary-color text-white text-center rounded-b-xl shadow-md">
+                    <h2 class="text-xl font-bold">AI Health Assistant</h2>
+                </div>
+                <div id="chat-container" class="flex-1 overflow-y-auto p-4 space-y-4 chat-container">
+                    <div class="flex justify-start">
+                        <div class="bg-gray-200 text-gray-800 p-4 rounded-xl max-w-xs shadow-sm">
+                            Hello! I am your AI Health Assistant. I can answer your questions about lifestyle and wellness. How can I help you today?
+                        </div>
+                    </div>
+                </div>
+                <div id="chat-input-container" class="p-4 bg-white border-t border-gray-200 flex items-center gap-2">
+                    <input type="text" id="chat-input" placeholder="Ask a question..." class="flex-1 px-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-primary-color">
+                    <button id="send-chat" class="w-10 h-10 bg-primary-color text-white rounded-full flex items-center justify-center hover:bg-teal-700 transition duration-200">
+                        <i data-lucide="send"></i>
+                    </button>
+                </div>
+                <div id="chat-loading" class="text-center p-2 hidden">
+                    <i class="fas fa-spinner fa-spin text-primary-color"></i>
+                    <span class="text-sm text-gray-500">Thinking...</span>
+                </div>
+            </div>
+
+            <!-- Doctor Booking Page -->
+            <div id="doctors-page" class="page hidden p-4 flex-1 overflow-y-auto">
+                <h2 class="text-2xl font-bold text-center text-secondary-color mb-6">Find a Doctor</h2>
+                <div id="doctors-list" class="space-y-4">
+                    <!-- Doctor cards will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Reminders Page -->
+            <div id="reminders-page" class="page hidden p-4 flex-1 overflow-y-auto">
+                <h2 class="text-2xl font-bold text-center text-secondary-color mb-6">Reminders</h2>
+                
+                <!-- Add New Reminder Form -->
+                <div class="enhanced-card p-6 rounded-xl mb-6">
+                    <h3 class="text-xl font-semibold mb-3">Add New Reminder</h3>
+                    <form id="add-reminder-form" class="space-y-3">
+                        <input type="text" id="reminder-text-input" placeholder="e.g., Take antibiotics at 8 PM" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-color" required>
+                        <select id="reminder-type-select" class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-color">
+                            <option value="medicine">Medicine</option>
+                            <option value="water">Water Intake</option>
+                            <option value="appointment">Appointment</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <button type="submit" class="w-full py-2 btn-primary font-semibold rounded-lg">Add Reminder</button>
+                    </form>
+                </div>
+
+                <!-- Reminders List -->
+                <div class="enhanced-card p-6 rounded-xl">
+                    <h3 class="text-xl font-semibold mb-3">Your Reminders</h3>
+                    <ul id="reminders-list" class="space-y-3">
+                        <!-- Reminders will be dynamically loaded here from Firestore -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="page hidden p-4 flex-1 overflow-y-auto">
+                <h2 class="text-2xl font-bold text-center text-secondary-color mb-6">Profile</h2>
+                <div class="enhanced-card p-6 rounded-xl">
+                    <h3 class="text-xl font-semibold mb-4">Personal Information</h3>
+                    <form id="profile-form" class="space-y-4">
+                        <label class="block">
+                            <span class="text-gray-700">Name</span>
+                            <input type="text" id="profile-name" class="mt-1 block w-full input-field px-4 py-2">
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700">Age</span>
+                            <input type="number" id="profile-age" class="mt-1 block w-full input-field px-4 py-2">
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700">Gender</span>
+                            <select id="profile-gender" class="mt-1 block w-full input-field px-4 py-2">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </label>
+                        <label class="block">
+                            <span class="text-gray-700">Email</span>
+                            <input type="email" id="profile-email" class="mt-1 block w-full input-field px-4 py-2 bg-gray-100 cursor-not-allowed" disabled>
+                        </label>
+                        <button type="submit" class="w-full py-2 btn-primary font-semibold rounded-lg">Save Changes</button>
+                    </form>
+                </div>
+                
+                <div class="mt-6">
+                    <button id="logout-btn" class="w-full py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition duration-200">Log Out</button>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation Bar -->
+            <nav id="bottom-nav" class="flex justify-around bg-white border-t border-gray-200 sticky bottom-0 p-2 shadow-inner">
+                <a href="#" class="nav-item flex flex-col items-center p-2 text-gray-500 hover:text-primary-color transition duration-200" onclick="showPage('dashboard-page')">
+                    <i data-lucide="home" class="w-6 h-6"></i>
+                    <span class="text-xs mt-1">Home</span>
+                </a>
+                <a href="#" class="nav-item flex flex-col items-center p-2 text-gray-500 hover:text-primary-color transition duration-200" onclick="showPage('chat-page')">
+                    <i data-lucide="message-square" class="w-6 h-6"></i>
+                    <span class="text-xs mt-1">AI Chat</span>
+                </a>
+                <a href="#" class="nav-item flex flex-col items-center p-2 text-gray-500 hover:text-primary-color transition duration-200" onclick="showPage('doctors-page')">
+                    <i data-lucide="stethoscope" class="w-6 h-6"></i>
+                    <span class="text-xs mt-1">Doctors</span>
+                </a>
+                <a href="#" class="nav-item flex flex-col items-center p-2 text-gray-500 hover:text-primary-color transition duration-200" onclick="showPage('reminders-page')">
+                    <i data-lucide="bell" class="w-6 h-6"></i>
+                    <span class="text-xs mt-1">Reminders</span>
+                </a>
+                <a href="#" class="nav-item flex flex-col items-center p-2 text-gray-500 hover:text-primary-color transition duration-200" onclick="showPage('profile-page')">
+                    <i data-lucide="user" class="w-6 h-6"></i>
+                    <span class="text-xs mt-1">Profile</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+    
+    <!-- Link to the external JavaScript file -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
