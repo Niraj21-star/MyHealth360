@@ -51,7 +51,8 @@ const firebaseConfig = {
     projectId: "myhealth360-e3925",
     storageBucket: "myhealth360-e3925.firebasestorage.app",
     messagingSenderId: "715968672088",
-    appId: "1:715968672088:web:3434f7c310cbaff847352d"
+    appId: "1:715968672088:web:3434f7c310cbaff847352d",
+    measurementId: "G-90HBNLVDHR"
 };
 
 // Use global variables from the Canvas environment
@@ -72,6 +73,11 @@ if (firebaseConfigString) {
 // Initialize Firebase services and set up event listeners
 const initFirebase = async () => {
     try {
+        if (!parsedFirebaseConfig.projectId || parsedFirebaseConfig.projectId === "YOUR_PROJECT_ID") {
+            showMessage("Firebase is not configured. Please add your project credentials to script.js", true);
+            return;
+        }
+        
         firebaseApp = initializeApp(parsedFirebaseConfig);
         auth = getAuth(firebaseApp);
         db = getFirestore(firebaseApp);
@@ -527,3 +533,4 @@ window.onload = () => {
     renderDoctors();
     lucide.createIcons();
 };
+
