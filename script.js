@@ -46,12 +46,12 @@ let userData = null;
 // --- Firebase Configuration ---
 // NOTE: Replace this with your own Firebase project credentials.
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyAg6p7_AnESepBSW2-wnIvSNklDtYNUntQ",
+    authDomain: "myhealth360-e3925.firebaseapp.com",
+    projectId: "myhealth360-e3925",
+    storageBucket: "myhealth360-e3925.firebasestorage.app",
+    messagingSenderId: "715968672088",
+    appId: "1:715968672088:web:3434f7c310cbaff847352d"
 };
 
 // Use global variables from the Canvas environment
